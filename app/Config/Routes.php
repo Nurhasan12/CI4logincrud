@@ -32,6 +32,8 @@ namespace Config;
 $routes = Services::routes();
 
 // Rute yang tidak memerlukan login (akses terbuka)
+
+$routes->get('testconnection', 'TestConnection::index');
 $routes->get('/', 'Auth::login'); // Halaman login
 $routes->post('/Auth/loginSubmit', 'Auth::loginSubmit'); // Form login
 $routes->get('/register', 'Auth::register'); // Halaman registrasi
@@ -46,8 +48,14 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('/edit/(:num)', 'Home::edit/$1'); // Halaman edit
     $routes->post('/update/(:num)', 'Home::update/$1'); // Proses update data
     $routes->get('/delete/(:num)', 'Home::delete/$1'); // Proses delete data
+
+    // Rute untuk test
+    $routes->get('/testinput', 'TestInput::index');
+    $routes->get('/inventory/search-name', 'InventoryController::searchName');
+    $routes->get('/inventory/search-part-number', 'InventoryController::searchPartNumber');
+    $routes->post('/inventory/tambah', 'InventoryController::tambah');
+
 });
 
 // Rute untuk logout (akses terbuka)
 $routes->get('/auth/logout', 'Auth::logout'); // Halaman logout
-

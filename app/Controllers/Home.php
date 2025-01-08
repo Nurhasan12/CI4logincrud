@@ -54,31 +54,6 @@ class Home extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-
-
-
-
-
-        // // Validasi input
-        // if (
-        //     $this->validate([
-        //         'nama' => 'required|min_length[3]|max_length[255]',
-        //         'nim' => 'required|is_unique[mahasiswa.nim]',
-        //         'email' => 'required|min_length[3]|max_length[255]'
-        //     ])
-        // ) {
-
-        //     // Simpan data mahasiswa baru
-        //     $this->mahasiswaModel->save([
-        //         'nama' => $this->request->getPost('nama'),
-        //         'nim' => $this->request->getPost('nim'),
-        //         'email' => $this->request->getPost('email'),
-        //     ]);
-        //     return redirect()->to('/home')->with('message', 'Data Mahasiswa berhasil disimpan.');
-        // } else {
-        //     // Jika validasi gagal
-        //     return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        // }
     }
 
     public function edit($id)
@@ -122,9 +97,3 @@ class Home extends BaseController
         return redirect()->to('/home')->with('message', 'Data Mahasiswa berhasil dihapus.');
     }
 }
-
-
-
-
-
-

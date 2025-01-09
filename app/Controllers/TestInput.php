@@ -16,12 +16,13 @@ class TestInput extends BaseController
 
     public function index(): string
     {
-        // $data = [
-        //     'title' => 'Input',
-        //     'input' => $this->inputModel->findAll() // Mengambil semua data input
-        // ];
+        $data = [
+            'title' => 'Input',
+            'input' => $this->inputModel->findAll() // Mengambil semua data input
+        ];
 
         // view home
-        return view('input/index');
+        return view('input/index', $data);
     }
 }
+

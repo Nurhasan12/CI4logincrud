@@ -1,55 +1,29 @@
 <?php
 
-// namespace App\Models;
-
-// use CodeIgniter\Model;
-
-// class SqlServerModel extends Model
-// {
-//     protected $DBGroup = 'sqlserver';  // Koneksi ke SQL Server
-
-//     // Fungsi pencarian berdasarkan name di SQL Server
-//     public function searchName($query)
-//     {
-//         $builder = $this->table('dbo.OITM');  // Ganti dengan nama tabel yang sesuai di SQL Server
-//         $builder->like('ItemName', $query);  // Pencarian menggunakan LIKE
-//         $result = $builder->get()->getResultArray();
-
-//         return $result;
-//     }
-
-//     // Fungsi pencarian berdasarkan part number di SQL Server
-//     public function searchPartNumber($query)
-//     {
-//         $builder = $this->table('dbo.OITM');  // Ganti dengan nama tabel yang sesuai di SQL Server
-//         $builder->like('ItemCode', $query);  // Pencarian menggunakan LIKE
-//         $result = $builder->get()->getResultArray();
-
-//         return $result;
-//     }
-// }
-
 namespace App\Models;
 
 use CodeIgniter\Model;
 
 class SqlServerModel extends Model
 {
-    // Tentukan koneksi ke SQL Server
-    protected $DBGroup = 'tests';  // Gunakan koneksi 'tests' yang sudah diatur di Database.php
+    protected $DBGroup = 'sqlsvr';  // Gunakan koneksi 'sqlsvr' untuk SQL Server
+    protected $table = 'OITM';
+    protected $primaryKey = 'ItemCode';
+    protected $allowedFields = ['ItemCode', 'ItemName'];
 
-    public function searchName($query)
+    // Fungsi untuk pencarian berdasarkan ItemName
+    public function searchByName($query)
     {
-        $builder = $this->table('inventory'); // Nama tabel sesuai dengan database SQL Server
-        $builder->like('name', $query); // Menambahkan pencarian nama
-        return $builder->get()->getResultArray();
+        return $this->like('ItemName', $query)
+            ->findAll(10);  // Limit hasil pencarian
     }
 
-    public function searchPartNumber($query)
+    // Fungsi untuk pencarian berdasarkan ItemCode
+    public function searchByPartNumber($query)
     {
-        $builder = $this->table('inventory'); // Nama tabel sesuai dengan database SQL Server
-        $builder->like('part_number', $query); // Menambahkan pencarian part number
-        return $builder->get()->getResultArray();
+        return $this->like('ItemCode', $query)
+            ->findAll(10);  // Limit hasil pencarian
     }
 }
+
 

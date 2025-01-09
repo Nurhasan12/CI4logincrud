@@ -70,7 +70,7 @@ class Database extends Config
     //     ],
     // ];
 
-    public $test = [
+    public $default = [
         'DSN' => '',
         'hostname' => 'localhost',
         'username' => 'root',
@@ -92,7 +92,7 @@ class Database extends Config
         'port' => 3306,
     ];
 
-    public $default = [
+    public $sqlsvr = [
         'DSN' => '',
         'hostname' => '192.168.10.250',
         'username' => 'programmer',

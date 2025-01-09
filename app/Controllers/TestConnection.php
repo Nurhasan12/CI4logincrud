@@ -9,7 +9,7 @@ class TestConnection extends Controller
     public function index()
     {
         // Mendapatkan instance database
-        $db = \Config\Database::connect();
+        $db = \Config\Database::connect('sqlsvr');
 
 
         // Cek apakah koneksi berhasil

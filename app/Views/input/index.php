@@ -1,174 +1,257 @@
-<?php $this->extend('template/header'); ?>
+<!DOCTYPE html>
+<html lang="en">
 
-<?php $this->section('content'); ?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Custom CSS -->
+    <style>
+        #nameSuggestions,
+        #partSuggestions {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
 
-<!-- <div class="container mt-3 mb-3">
+        .suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
 
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
 
-    <div class="row mb-3">
-        <div class="col-lg-6">
-            <button type="button" class="btn btn-primary tombolTambahData" data-bs-toggle="modal"
-                data-bs-target="#formModal">
-                Add Data
+        .modal-body {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light container">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/testinput">Part</a>
+                    </li>
+                </ul>
+                <a href="/auth/logout">
+                    <span class="navbar-text">
+                        log out
+                    </span>
+                </a>
+            </div>
         </div>
-    </div> -->
+    </nav>
 
+    <!-- Main Content -->
+    <div class="container mt-3 mb-3">
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <button type="button" class="btn btn-primary tombolTambahData" data-bs-toggle="modal"
+                    data-bs-target="#formModal">
+                    Add Data
+                </button>
+            </div>
+        </div>
 
-<!-- Tambah data mahasiswa -->
-<!-- <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="judulModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="judulModal">Add New Data</h1>
-                    <button type="button" class="btn-close tombolTambahData" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div> -->
-<!-- <div class="modal-body"> -->
-<!-- form tambah data mahasiswa -->
-<!-- <form action="/mahasiswa/tambahh" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="id" id="id">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">name</label>
-                            <input type="text" class="form-control" id="name" name="name">
-                        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="judulModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="judulModal">Add New Data</h1>
+                        <button type="button" class="btn-close tombolTambahData" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addDataForm" action="/inventoryController/tambah" method="post"
+                            enctype="multipart/form-data">
+                            <input type="hidden" name="id" id="id">
 
-                        <div class="mb-3">
-                            <label for="university" class="form-label">Part Number</label>
-                            <input type="text" class="form-control" id="university" name="university">
-                        </div>
-                    </form>
+                            <!-- Input Name -->
+                            <div class="mb-3 position-relative">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name">
+                                <div id="nameSuggestions"></div>
+                            </div>
+
+                            <!-- Input Part Number -->
+                            <div class="mb-3 position-relative">
+                                <label for="partNumber" class="form-label">Part Number</label>
+                                <input type="text" class="form-control" id="partNumber" name="partNumber">
+                                <div id="partSuggestions"></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" form="addDataForm" class="btn btn-primary">Save</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div> -->
 
-
-<div class="container mt-3 mb-3">
-    <div class="row mb-3">
-        <div class="col-lg-6">
-            <button type="button" class="btn btn-primary tombolTambahData" data-bs-toggle="modal"
-                data-bs-target="#formModal">
-                Add Data
-            </button>
+        <!-- Table untuk menampilkan data -->
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Part Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (isset($input)): ?>
+                        <?php foreach ($input as $i): ?>
+                            <tr>
+                                <td><?= $i['name'] ?></td>
+                                <td><?= $i['part_number'] ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Tambah data inventory -->
-    <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="judulModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="judulModal">Add New Data</h1>
-                    <button type="button" class="btn-close tombolTambahData" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Form tambah data inventory -->
-                    <form id="addDataForm" action="/inventory/tambah" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="id" id="id">
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
-                        <!-- Input Name -->
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name">
-                            <div id="nameSuggestions"></div> <!-- Untuk menampilkan saran nama -->
-                        </div>
+    <!-- Custom JavaScript -->
+    <script>
+        $(document).ready(function () {
+            let searchTimeout;
 
-                        <!-- Input Part Number -->
-                        <div class="mb-3">
-                            <label for="partNumber" class="form-label">Part Number</label>
-                            <input type="text" class="form-control" id="partNumber" name="partNumber">
-                            <div id="partSuggestions"></div> <!-- Untuk menampilkan saran part number -->
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="addDataForm" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+            // Live search untuk name
+            $('#name').keyup(function () {
+                clearTimeout(searchTimeout);
+                const searchTerm = $(this).val();
 
-
-
-
-
-
-
-
-
-
-<div class="container">
-    <table class="table mt-5">
-        <thead>
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Part Number</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>3</td>
-                <td>2</td>
-            </tr>
-
-        </tbody>
-    </table>
-</div>
-
-<script>
-    // Pencarian untuk Name
-    document.getElementById("name").addEventListener("input", function () {
-        const name = this.value;
-
-        if (name.length > 2) {  // Mulai pencarian setelah 3 karakter dimasukkan
-            fetch(`/inventory/search-name?query=${name}`)
-                .then(response => response.json())
-                .then(data => {
-                    let suggestions = data.map(item => `<div class="suggestion-item">${item.name}</div>`).join('');
-                    document.getElementById("nameSuggestions").innerHTML = suggestions;
-
-                    // Tambahkan event listener untuk memilih name
-                    document.querySelectorAll(".suggestion-item").forEach(item => {
-                        item.addEventListener("click", function () {
-                            document.getElementById("name").value = this.textContent;
-                            document.getElementById("nameSuggestions").innerHTML = '';  // Clear suggestions
+                if (searchTerm.length >= 2) {
+                    searchTimeout = setTimeout(function () {
+                        $.ajax({
+                            url: '/searchName',
+                            method: 'GET',
+                            dataType: 'json',
+                            data: {
+                                search: searchTerm,
+                                field: 'ItemName'
+                            },
+                            success: function (response) {
+                                let html = '';
+                                if (response && response.length > 0) {
+                                    response.forEach(item => {
+                                        html += `<div class="suggestion-item" data-name="${item.ItemName}" data-partnumber="${item.ItemCode}">
+                                              ${item.ItemName}
+                                           </div>`;
+                                    });
+                                    $('#nameSuggestions').html(html).show();
+                                } else {
+                                    $('#nameSuggestions').hide();
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error:', error);
+                                $('#nameSuggestions').hide();
+                            }
                         });
-                    });
-                });
-        } else {
-            document.getElementById("nameSuggestions").innerHTML = '';  // Clear suggestions
-        }
-    });
+                    }, 300);
+                } else {
+                    $('#nameSuggestions').hide();
+                }
+            });
 
-    // Pencarian untuk Part Number
-    document.getElementById("partNumber").addEventListener("input", function () {
-        const partNumber = this.value;
+            // Live search untuk part number
+            $('#partNumber').keyup(function () {
+                clearTimeout(searchTimeout);
+                const searchTerm = $(this).val();
 
-        if (partNumber.length > 2) {  // Mulai pencarian setelah 3 karakter dimasukkan
-            fetch(`/inventory/search-part-number?query=${partNumber}`)
-                .then(response => response.json())
-                .then(data => {
-                    let suggestions = data.map(item => `<div class="suggestion-item">${item.part_number}</div>`).join('');
-                    document.getElementById("partSuggestions").innerHTML = suggestions;
-
-                    // Tambahkan event listener untuk memilih part number
-                    document.querySelectorAll(".suggestion-item").forEach(item => {
-                        item.addEventListener("click", function () {
-                            document.getElementById("partNumber").value = this.textContent;
-                            document.getElementById("partSuggestions").innerHTML = '';  // Clear suggestions
+                if (searchTerm.length >= 2) {
+                    searchTimeout = setTimeout(function () {
+                        $.ajax({
+                            url: '/searchPartNumber',
+                            method: 'GET',
+                            dataType: 'json',
+                            data: {
+                                search: searchTerm,
+                                field: 'ItemCode'
+                            },
+                            success: function (response) {
+                                let html = '';
+                                if (response && response.length > 0) {
+                                    response.forEach(item => {
+                                        html += `<div class="suggestion-item" data-name="${item.ItemName}" data-partnumber="${item.ItemCode}">
+                                              ${item.ItemCode} - ${item.ItemName}
+                                           </div>`;
+                                    });
+                                    $('#partSuggestions').html(html).show();
+                                } else {
+                                    $('#partSuggestions').hide();
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error:', error);
+                                $('#partSuggestions').hide();
+                            }
                         });
-                    });
-                });
-        } else {
-            document.getElementById("partSuggestions").innerHTML = '';  // Clear suggestions
-        }
-    });
-</script>
+                    }, 300);
+                } else {
+                    $('#partSuggestions').hide();
+                }
+            });
 
-<?php $this->endsection(); ?>
+            // Handle klik suggestion
+            $(document).on('click', '.suggestion-item', function () {
+                const name = $(this).data('name');
+                const partNumber = $(this).data('partnumber');
+
+                $('#name').val(name);
+                $('#partNumber').val(partNumber);
+
+                $('#nameSuggestions').hide();
+                $('#partSuggestions').hide();
+            });
+
+            // Hide suggestions when clicking outside
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('.mb-3').length) {
+                    $('#nameSuggestions, #partSuggestions').hide();
+                }
+            });
+
+            // Form submit handler
+            $('#addDataForm').on('submit', function (e) {
+                if (!$('#name').val() || !$('#partNumber').val()) {
+                    e.preventDefault();
+                    alert('Please fill in all fields');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

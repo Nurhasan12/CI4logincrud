@@ -17,36 +17,21 @@ class InventoryController extends Controller
         $this->mySQLModel = new LocalModel();  // Model untuk MySQL
     }
 
-    // Fungsi untuk mencari berdasarkan nama di SQL Server (OITM)
+
     public function searchName()
     {
-        $query = $this->request->getGet('query');
-        $results = $this->sqlServerModel->searchByName($query);
+        $searchTerm = $this->request->getGet('search');  // Pastikan kita mendapatkan 'search' dan 'field'
+        $results = $this->sqlServerModel->searchByName($searchTerm);
 
-        // Mengirim hasil pencarian ke view
-        $output = '';
-        if ($results) {
-            foreach ($results as $result) {
-                $output .= '<p>' . $result['ItemName'] . '</p>';
-            }
-        }
-        return $output;
+        return $this->response->setJSON($results);  // Mengembalikan data JSON
     }
 
-    // Fungsi untuk mencari berdasarkan part number di SQL Server (OITM)
     public function searchPartNumber()
     {
-        $query = $this->request->getGet('query');
-        $results = $this->sqlServerModel->searchByPartNumber($query);
+        $searchTerm = $this->request->getGet('search');  // Pastikan kita mendapatkan 'search' dan 'field'
+        $results = $this->sqlServerModel->searchByPartNumber($searchTerm);
 
-        // Mengirim hasil pencarian ke view
-        $output = '';
-        if ($results) {
-            foreach ($results as $result) {
-                $output .= '<p>' . $result['ItemCode'] . '</p>';
-            }
-        }
-        return $output;
+        return $this->response->setJSON($results);  // Mengembalikan data JSON
     }
 
     // Fungsi untuk menyimpan data ke MySQL
@@ -63,5 +48,12 @@ class InventoryController extends Controller
         } else {
             return redirect()->to('/testinput')->with('error', 'Failed to save data.');
         }
+    }
+
+    public function delete($id)
+    {
+        // Hapus data mahasiswa berdasarkan ID
+        $this->mySQLModel->delete($id);
+        return redirect()->to('/testinput')->with('message', 'Data Mahasiswa berhasil dihapus.');
     }
 }

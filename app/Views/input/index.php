@@ -87,23 +87,23 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="addDataForm" action="/inventoryController/tambah" method="post"
-                            enctype="multipart/form-data">
+                        <form id="addDataForm" action="/saveData" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="id" id="id">
 
                             <!-- Input Name -->
                             <div class="mb-3 position-relative">
                                 <label for="name" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="name" name="name">
-                                <div id="nameSuggestions"></div>
+                                <div id="nameSuggestions"></div> <!-- Menampilkan suggestions -->
                             </div>
 
                             <!-- Input Part Number -->
                             <div class="mb-3 position-relative">
                                 <label for="partNumber" class="form-label">Part Number</label>
                                 <input type="text" class="form-control" id="partNumber" name="partNumber">
-                                <div id="partSuggestions"></div>
+                                <div id="partSuggestions"></div> <!-- Menampilkan suggestions -->
                             </div>
+
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -121,6 +121,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Part Number</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -129,6 +130,13 @@
                             <tr>
                                 <td><?= $i['name'] ?></td>
                                 <td><?= $i['part_number'] ?></td>
+                                <td>
+                                    <a href="/edit/<?= $i['id']; ?>"><button type="button"
+                                            class="btn btn-warning">edit</button></a>
+                                    <a href="/inventoryController/delete/<?= $i['id']; ?>"><button type="button"
+                                            class="btn btn-danger"
+                                            onclick="return confirm('Apakah anda yakin?')">hapus</button></a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -151,37 +159,37 @@
                 clearTimeout(searchTimeout);
                 const searchTerm = $(this).val();
 
-                if (searchTerm.length >= 2) {
+                if (searchTerm.length >= 2) {  // Minimal 2 karakter untuk memulai pencarian
                     searchTimeout = setTimeout(function () {
                         $.ajax({
-                            url: '/searchName',
+                            url: '/searchName',  // Pastikan URL sesuai dengan route yang ditentukan
                             method: 'GET',
-                            dataType: 'json',
+                            dataType: 'json',  // Harus sesuai dengan response yang diharapkan (JSON)
                             data: {
-                                search: searchTerm,
-                                field: 'ItemName'
+                                search: searchTerm,  // Mengirimkan 'search' sebagai parameter
+                                field: 'ItemName'  // Field pencarian, tidak digunakan secara langsung di controller tapi bisa ditambahkan untuk kebutuhan lebih lanjut
                             },
                             success: function (response) {
                                 let html = '';
-                                if (response && response.length > 0) {
+                                if (response.length > 0) {
                                     response.forEach(item => {
                                         html += `<div class="suggestion-item" data-name="${item.ItemName}" data-partnumber="${item.ItemCode}">
-                                              ${item.ItemName}
-                                           </div>`;
+                                          ${item.ItemName}
+                                       </div>`;
                                     });
                                     $('#nameSuggestions').html(html).show();
                                 } else {
-                                    $('#nameSuggestions').hide();
+                                    $('#nameSuggestions').hide();  // Menyembunyikan suggestion jika tidak ada hasil
                                 }
                             },
                             error: function (xhr, status, error) {
                                 console.error('Error:', error);
-                                $('#nameSuggestions').hide();
+                                $('#nameSuggestions').hide();  // Menyembunyikan suggestion jika terjadi error
                             }
                         });
-                    }, 300);
+                    }, 300);  // Menambahkan delay untuk mencegah banyak request
                 } else {
-                    $('#nameSuggestions').hide();
+                    $('#nameSuggestions').hide();  // Menyembunyikan suggestion jika input kurang dari 2 karakter
                 }
             });
 
@@ -202,11 +210,11 @@
                             },
                             success: function (response) {
                                 let html = '';
-                                if (response && response.length > 0) {
+                                if (response.length > 0) {
                                     response.forEach(item => {
                                         html += `<div class="suggestion-item" data-name="${item.ItemName}" data-partnumber="${item.ItemCode}">
-                                              ${item.ItemCode} - ${item.ItemName}
-                                           </div>`;
+                                          ${item.ItemCode} - ${item.ItemName}
+                                       </div>`;
                                     });
                                     $('#partSuggestions').html(html).show();
                                 } else {

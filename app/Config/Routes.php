@@ -51,15 +51,14 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     // Rute untuk test
     $routes->get('/testinput', 'TestInput::index');
-    // $routes->get('/inventory/search-name', 'InventoryController::searchName');
-    // $routes->get('/inventory/search-part-number', 'InventoryController::searchPartNumber');
-
-    // $routes->post('/inventoryController/tambah', 'InventoryController::tambah');
+    $routes->get('/searchName', 'InventoryController::searchName');
+    $routes->get('/searchPartNumber', 'InventoryController::searchPartNumber');
+    $routes->post('/saveData', 'InventoryController::saveData');
+    $routes->get('/inventoryController/delete/(:num)', 'InventoryController::delete/$1');
 
 
 });
-$routes->get('/searchName', 'InventoryController::searchName');
-$routes->get('/searchPartNumber', 'InventoryController::searchPartNumber');
-$routes->post('/tambah', 'InventoryController::saveData');
+// $routes->get('/searchName', 'InventoryController::searchName');
+// $routes->get('/searchPartNumber', 'InventoryController::searchPartNumber');
 // Rute untuk logout (akses terbuka)
 $routes->get('/auth/logout', 'Auth::logout'); // Halaman logout

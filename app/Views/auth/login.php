@@ -35,7 +35,7 @@
             <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
         <?php endif; ?>
 
-        <form method="post" action="/Auth/loginSubmit">
+        <form method="post" action="<?= base_url() ?>/Auth/loginSubmit">
             <?= csrf_field() ?>
 
             <div class="form-group">
@@ -52,7 +52,7 @@
         </form>
 
         <p class="text-center mt-3">
-            <a href="/register">Register</a>
+            <a href="<?= base_url() ?>/register">Register</a>
         </p>
     </div>
 
